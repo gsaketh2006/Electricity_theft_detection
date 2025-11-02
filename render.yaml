@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: electricity-fraud-detection
+    env: python
+    buildCommand: pip install -r electricity_fraud/requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FLASK_ENV
+        value: production
+
+
+
+

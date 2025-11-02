@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Fraud Detection System - EDMS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .header-title h1 {
+            font-size: 1.6em;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .header-title p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 0.9em;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 30px;
+        }
+
+        .breadcrumb {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .breadcrumb a {
+            color: #2a5298;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+        }
+
+        .card-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card-header h2 {
+            color: #1e3c72;
+            font-size: 1.4em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header .subtitle {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        .section-title {
+            color: #1e3c72;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 25px 0 15px 0;
+            padding-left: 10px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .required {
+            color: #e53e3e;
+        }
+
+        .label-info {
+            color: #999;
+            font-size: 0.85em;
+            font-weight: 400;
+        }
+
+        input, select {
+            padding: 11px 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+            background: white;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        input:hover, select:hover {
+            border-color: #9ca3af;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        button {
+            padding: 12px 28px;
+            font-size: 0.95em;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #2a5298;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #1e3c72;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 12px 24px;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-panel {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .info-panel h3 {
+            color: #1e40af;
+            font-size: 1em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-panel ul {
+            list-style: none;
+            color: #1e40af;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+
+        .info-panel li:before {
+            content: "→";
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #1e3c72;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .result-container {
+            display: none;
+            margin-top: 20px;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 5px solid;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-container.fraud {
+            background: #fee;
+            border-color: #dc2626;
+        }
+
+        .result-container.normal {
+            background: #f0fdf4;
+            border-color: #16a34a;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .result-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .result-container.fraud .result-icon {
+            background: #dc2626;
+            color: white;
+        }
+
+        .result-container.normal .result-icon {
+            background: #16a34a;
+            color: white;
+        }
+
+        .result-title {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .result-container.fraud .result-title {
+            color: #dc2626;
+        }
+
+        .result-container.normal .result-title {
+            color: #16a34a;
+        }
+
+        .result-details {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+        }
+
+        .result-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .result-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-weight: 700;
+        }
+
+        .risk-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .risk-bar {
+            flex: 1;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .risk-fill {
+            height: 100%;
+            transition: width 0.6s ease;
+            border-radius: 10px;
+        }
+
+        .risk-label {
+            font-weight: 600;
+            min-width: 60px;
+            text-align: right;
+        }
+
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .user-info {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">⚡</div>
+                <div class="header-title">
+                    <h1>Energy Distribution Management System</h1>
+                    <p>Fraud Detection & Analytics Module</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div><strong>Analyst Dashboard</strong></div>
+                <div style="opacity: 0.9;">Session: <span id="sessionTime"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="#">Dashboard</a> / <a href="#">Fraud Detection</a> / <strong>Analysis Tool</strong>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <span>📊</span>
+                        Consumption Pattern Analysis
+                    </h2>
+                    <div class="subtitle">Enter meter reading statistics for fraud probability assessment</div>
+                </div>
+
+                <form id="fraudForm">
+                    <div class="section-title">Customer Information</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                Customer ID / Meter Number
+                                <span class="label-info">(optional)</span>
+                            </label>
+                            <input type="text" id="customer_id" placeholder="e.g., MTR-2024-1234">
+                        </div>
+                    </div>
+
+                    <div class="section-title">Statistical Metrics</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                Mean Consumption (kWh)
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="mean_consumption" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Coefficient of Variation (CV)
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="cv" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Skewness
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="skewness" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Interquartile Range (IQR)
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="iqr" step="0.01" required placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="section-title">Anomaly Indicators</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>
+                                Zero Reading Count
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="num_zeros" min="0" required placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Readings Below Mean
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="num_below_mean" min="0" required placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Consumption Trend Slope
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="trend_slope" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Sudden Drop Incidents
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="sudden_drop_count" min="0" required placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Maximum Drop Percentage (%)
+                                <span class="required">*</span>
+                            </label>
+                            <input type="number" id="max_drop_pct" step="0.01" required placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn-primary">🔍 Run Fraud Analysis</button>
+                        <button type="reset" class="btn-secondary">Clear Form</button>
+                    </div>
+                </form>
+
+                <div id="result" class="result-container"></div>
+            </div>
+
+            <div class="sidebar">
+                <div class="info-panel">
+                    <h3>ℹ️ Analysis Guidelines</h3>
+                    <ul>
+                        <li>All fields marked with * are required</li>
+                        <li>Ensure data accuracy for reliable results</li>
+                        <li>High CV indicates irregular patterns</li>
+                        <li>Negative trends suggest declining usage</li>
+                        <li>Multiple zero readings may indicate tampering</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update session time
+        function updateSessionTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit'
+            });
+            document.getElementById('sessionTime').textContent = timeString;
+        }
+        updateSessionTime();
+        setInterval(updateSessionTime, 1000);
+
+        const form = document.getElementById('fraudForm');
+        const resultContainer = document.getElementById('result');
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = '⏳ Analyzing...';
+            
+            const data = {
+                customer_id: document.getElementById('customer_id').value || 'N/A',
+                mean_consumption: parseFloat(document.getElementById('mean_consumption').value),
+                cv: parseFloat(document.getElementById('cv').value),
+                num_zeros: parseInt(document.getElementById('num_zeros').value),
+                trend_slope: parseFloat(document.getElementById('trend_slope').value),
+                sudden_drop_count: parseInt(document.getElementById('sudden_drop_count').value),
+                num_below_mean: parseInt(document.getElementById('num_below_mean').value),
+                skewness: parseFloat(document.getElementById('skewness').value),
+                iqr: parseFloat(document.getElementById('iqr').value),
+                max_drop_pct: parseFloat(document.getElementById('max_drop_pct').value)
+            };
+
+            // Validate all required fields are filled
+            const requiredFields = [
+                'mean_consumption', 'cv', 'num_zeros',
+                'trend_slope', 'sudden_drop_count', 'num_below_mean',
+                'skewness', 'iqr', 'max_drop_pct'
+            ];
+            
+            const missingFields = requiredFields.filter(field => {
+                const value = document.getElementById(field).value;
+                return !value || value === '';
+            });
+            
+            if (missingFields.length > 0) {
+                alert('Please fill in all required fields:\n' + missingFields.join(', '));
+                submitButton.disabled = false;
+                submitButton.textContent = '🔍 Run Fraud Analysis';
+                return;
+            }
+
+            try {
+                // Call Flask API
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.prediction) {
+                    displayResults(result.prediction, { customer_id: result.customer_id || data.customer_id });
+                } else {
+                    let errorMsg = result.error || 'Failed to get prediction';
+                    if (result.missing_features && result.missing_features.length > 0) {
+                        errorMsg += '\nMissing: ' + result.missing_features.join(', ');
+                    }
+                    alert('Error: ' + errorMsg);
+                    resultContainer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error connecting to server: ' + error.message);
+                resultContainer.style.display = 'none';
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = '🔍 Run Fraud Analysis';
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+
+        form.addEventListener('reset', function() {
+            resultContainer.style.display = 'none';
+        });
+
+        function displayResults(analysis, data) {
+            const riskColors = {
+                fraud: '#dc2626',
+                normal: '#16a34a'
+            };
+
+            const icons = {
+                fraud: '⚠️',
+                normal: '✓'
+            };
+
+            const titles = {
+                fraud: 'FRAUD DETECTED - Immediate Action Required',
+                normal: 'NORMAL - No Fraud Detected'
+            };
+
+            const color = riskColors[analysis.classification];
+
+            let indicatorHTML = '';
+            if (analysis.indicators.length > 0) {
+                indicatorHTML = `
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(0,0,0,0.05);">
+                        <strong style="display: block; margin-bottom: 10px; color: #333;">Detected Indicators:</strong>
+                        <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+                            ${analysis.indicators.map(ind => `<li style="color: #666;">${ind}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            resultContainer.className = `result-container ${analysis.classification}`;
+            resultContainer.innerHTML = `
+                <div class="result-header">
+                    <div class="result-icon">${icons[analysis.classification]}</div>
+                    <div>
+                        <div class="result-title">${titles[analysis.classification]}</div>
+                        <div style="color: #666; font-size: 0.9em; margin-top: 5px;">
+                            Analysis completed at ${new Date().toLocaleString()}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="risk-indicator">
+                    <span class="risk-label" style="color: ${color};">${analysis.riskLevel}</span>
+                    <div class="risk-bar">
+                        <div class="risk-fill" style="width: ${analysis.score}%; background: ${color};"></div>
+                    </div>
+                    <span style="font-weight: 700; color: ${color};">${analysis.score.toFixed(1)}%</span>
+                </div>
+
+                <div class="result-details">
+                    <div class="result-metric">
+                        <span class="metric-label">Case ID:</span>
+                        <span class="metric-value">${data.customer_id}</span>
+                    </div>
+                    <div class="result-metric">
+                        <span class="metric-label">Prediction:</span>
+                        <span class="metric-value" style="color: ${color}; font-weight: 700; text-transform: uppercase;">${analysis.classification === 'fraud' ? 'FRAUD' : 'NORMAL'}</span>
+                    </div>
+                    <div class="result-metric">
+                        <span class="metric-label">Fraud Probability:</span>
+                        <span class="metric-value" style="color: ${color};">${analysis.score.toFixed(2)}%</span>
+                    </div>
+                    <div class="result-metric">
+                        <span class="metric-label">Model Confidence:</span>
+                        <span class="metric-value">${analysis.confidence.toFixed(1)}%</span>
+                    </div>
+                    ${indicatorHTML}
+                </div>
+            `;
+            
+            resultContainer.style.display = 'block';
+        }
+
+    </script>
+</body>
+</html>
