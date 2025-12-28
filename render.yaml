@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: Electricity_theft_detector
+    env: python
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "bash start.sh"
+    healthCheckPath: "/ready"
+    healthCheckProtocol: http
+    healthCheckIntervalSeconds: 10
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: '1'

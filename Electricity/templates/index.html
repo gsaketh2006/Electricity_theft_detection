@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Distribution Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #85F8FF rgba(133, 248, 255, 0.2);
+        }
+
+        /* Custom Scrollbar for Webkit browsers */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 40, 71, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #85F8FF 0%, #5DD9E8 100%);
+            border-radius: 10px;
+            border: 2px solid rgba(15, 40, 71, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5DD9E8 0%, #85F8FF 100%);
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: #85F8FF;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2847 0%, #1a4d7a 50%, #0f2847 100%);
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(133, 248, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(133, 248, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(133, 248, 255, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .header-bar {
+            background: rgba(15, 40, 71, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(133, 248, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #85F8FF 0%, #5DD9E8 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(133, 248, 255, 0.4);
+        }
+
+        .logo-icon::before {
+            content: '⚡';
+            font-size: 28px;
+            color: #0f2847;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 12px;
+            color: #85F8FF;
+            font-weight: 500;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #85F8FF;
+            font-weight: 600;
+        }
+
+        .session-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 2px;
+        }
+
+        .breadcrumb {
+            padding: 20px 40px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            position: relative;
+            z-index: 5;
+        }
+
+        .breadcrumb a {
+            color: #85F8FF;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #ffffff;
+        }
+
+        .main-container {
+            padding: 20px 40px 60px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(133, 248, 255, 0.1);
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #85F8FF rgba(133, 248, 255, 0.1);
+        }
+
+        .form-card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .form-card::-webkit-scrollbar-track {
+            background: rgba(133, 248, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .form-card::-webkit-scrollbar-thumb {
+            background: #85F8FF;
+            border-radius: 10px;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #85F8FF 0%, #5DD9E8 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f2847;
+        }
+
+        .card-description {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px 0 20px;
+        }
+
+        .section-line {
+            height: 3px;
+            width: 4px;
+            background: linear-gradient(90deg, #85F8FF 0%, transparent 100%);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f2847;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #334155;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        label .optional {
+            color: #94a3b8;
+            font-weight: 400;
+            font-size: 11px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #f8fafc;
+            color: #1e293b;
+            font-family: inherit;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #85F8FF;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(133, 248, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        input:hover:not(:focus), select:hover:not(:focus) {
+            border-color: #cbd5e1;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23334155' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .btn-primary {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #0f2847 0%, #1a4d7a 100%);
+            color: white;
+            border: 2px solid #85F8FF;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(133, 248, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(133, 248, 255, 0.3), transparent);
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(133, 248, 255, 0.4);
+            background: linear-gradient(135deg, #1a4d7a 0%, #0f2847 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            transition: transform 0.1s;
+        }
+
+        .btn-secondary {
+            padding: 16px 32px;
+            background: white;
+            color: #475569;
+            border: 2px solid #e2e8f0;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+            transition: transform 0.1s;
+        }
+
+        .sidebar {
+            animation: slideInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .info-card {
+            background: rgba(133, 248, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(133, 248, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #85F8FF rgba(133, 248, 255, 0.2);
+        }
+
+        .info-card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .info-card::-webkit-scrollbar-track {
+            background: rgba(133, 248, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .info-card::-webkit-scrollbar-thumb {
+            background: #85F8FF;
+            border-radius: 10px;
+        }
+
+        .info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-icon {
+            width: 32px;
+            height: 32px;
+            background: #85F8FF;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .guideline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-left: 5px;
+        }
+
+        .guideline-item::before {
+            content: '→';
+            color: #85F8FF;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 1px;
+        }
+
+        .guideline-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-bar {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .logo-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logo-title {
+                font-size: 16px;
+            }
+
+            .logo-subtitle {
+                font-size: 11px;
+            }
+
+            .breadcrumb {
+                padding: 12px 20px;
+                font-size: 12px;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .main-container {
+                padding: 20px 16px 40px;
+            }
+
+            .form-card {
+                padding: 24px 20px;
+            }
+
+            .card-title {
+                font-size: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 14px 24px;
+                font-size: 14px;
+            }
+
+            .info-card {
+                padding: 24px 20px;
+            }
+
+            input, select {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 12px 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-bar {
+                padding: 12px 16px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo-icon::before {
+                font-size: 22px;
+            }
+
+            .logo-title {
+                font-size: 14px;
+            }
+
+            .main-container {
+                padding: 16px 12px 32px;
+            }
+
+            .form-card {
+                padding: 20px 16px;
+                border-radius: 16px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .card-title {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 14px;
+            }
+
+            label {
+                font-size: 12px;
+            }
+
+            .guideline-text {
+                font-size: 12px;
+            }
+        }
+
+        /* Smooth scrolling for mobile */
+        @media (max-width: 768px) {
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Enhanced mobile scrollbar */
+            ::-webkit-scrollbar {
+                width: 6px;
+                height: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: rgba(15, 40, 71, 0.3);
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #85F8FF;
+                border-radius: 6px;
+            }
+        }
+
+        /* Touch-friendly tap targets */
+        @media (hover: none) and (pointer: coarse) {
+            button {
+                min-height: 48px;
+            }
+
+            input, select {
+                min-height: 48px;
+            }
+        }
+
+        .model-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #85F8FF 0%, #5DD9E8 100%);
+            color: #0f2847;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header-bar">
+    <div class="logo-section">
+        <div class="logo-icon"></div>
+        <div class="logo-text">
+            <div class="logo-title">Energy Distribution Management System</div>
+            <div class="logo-subtitle">Fraud Detection & Analytics Module</div>
+        </div>
+    </div>
+    <div class="user-info">
+        <div class="user-role">Analyst Dashboard</div>
+        <div class="session-time" id="sessionTime">Session: --:-- --</div>
+    </div>
+</div>
+
+<div class="breadcrumb">
+    <a href="#">Dashboard</a> / <a href="#">Fraud Detection</a> / <span>Analysis Tool</span>
+</div>
+
+<div class="main-container">
+    <div class="content-wrapper">
+        <div class="form-card">
+            <div class="card-header">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Consumption Pattern Analysis</div>
+            </div>
+            <div class="card-description">Enter meter reading statistics for fraud probability assessment</div>
+
+            <form id="predictionForm">
+
+                <div class="section-divider">
+                    <div class="section-line"></div>
+                    <div class="section-title">Statistical Metrics</div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Mean Consumption (kWh) <span class="required">*</span></label>
+                        <input type="number" step="any" name="mean_consumption" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Standard Deviation <span class="required">*</span></label>
+                        <input type="number" step="any" name="std_consumption" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Coefficient of Variation (CV) <span class="required">*</span></label>
+                        <input type="number" step="any" name="cv" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Skewness <span class="required">*</span></label>
+                        <input type="number" step="any" name="skewness" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="section-divider">
+                    <div class="section-line"></div>
+                    <div class="section-title">Consumption Range</div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Minimum Consumption (kWh) <span class="required">*</span></label>
+                        <input type="number" step="any" name="min_consumption" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Interquartile Range (IQR) <span class="required">*</span></label>
+                        <input type="number" step="any" name="iqr" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="section-divider">
+                    <div class="section-line"></div>
+                    <div class="section-title">Anomaly Indicators</div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Readings Below Mean <span class="required">*</span></label>
+                        <input type="number" step="1" name="num_below_mean" placeholder="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Sudden Drop Incidents <span class="required">*</span></label>
+                        <input type="number" step="1" name="sudden_drop_count" placeholder="0" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Maximum Drop Percentage (%) <span class="required">*</span></label>
+                        <input type="number" step="any" name="max_drop_pct" placeholder="0.00" required>
+                    </div>
+                </div>
+
+                <div class="section-divider">
+                    <div class="section-line"></div>
+                    <div class="section-title">Model Selection</div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Model Type <span class="optional">(optional)</span></label>
+                        <select name="model_type">
+                            <option value="xgboost" selected>XGBoost</option>
+                            <option value="lightgbm">LightGBM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">🔍 Run Fraud Analysis</button>
+                    <button type="button" class="btn-secondary" onclick="clearForm()">Clear Form</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="sidebar">
+            <div class="info-card" id="resultsCard" style="display: none;" aria-live="polite">
+                <div class="info-header">
+                    <div class="info-icon">📈</div>
+                    <div class="info-title">Analysis Results</div>
+                </div>
+                <div id="resultsContent">
+                    <!-- Results will be displayed here -->
+                </div>
+            </div>
+
+            <style>
+                /* Progress bar styles for probability display */
+                .progress {
+                    width: 100%;
+                    background: rgba(15,40,71,0.08);
+                    border-radius: 8px;
+                    overflow: hidden;
+                    height: 12px;
+                    margin-top: 8px;
+                }
+
+                .progress-bar {
+                    height: 100%;
+                    background: linear-gradient(90deg, #85F8FF 0%, #5DD9E8 100%);
+                    transition: width 0.6s ease;
+                }
+
+                .results-row {
+                    margin-top: 10px;
+                }
+
+                .error-text {
+                    color: #ef4444;
+                    font-weight: 700;
+                }
+            </style>
+
+            <div class="info-card" id="guidelinesCard">
+                <div class="info-header">
+                    <div class="info-icon">ℹ️</div>
+                    <div class="info-title">Analysis Guidelines</div>
+                </div>
+                <div class="guideline-item">
+                    <div class="guideline-text">All fields marked with * are required</div>
+                </div>
+                <div class="guideline-item">
+                    <div class="guideline-text">Ensure data accuracy for reliable results</div>
+                </div>
+                <div class="guideline-item">
+                    <div class="guideline-text">High CV indicates irregular patterns</div>
+                </div>
+                <div class="guideline-item">
+                    <div class="guideline-text">Negative trends suggest declining usage</div>
+                </div>
+                <div class="guideline-item">
+                    <div class="guideline-text">Multiple zero readings may indicate tampering</div>
+                </div>
+                <div class="guideline-item">
+                    <div class="guideline-text">Choose model type for analysis (XGBoost or LightGBM)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        document.getElementById('sessionTime').textContent = `Session: ${hours}:${minutes} ${ampm}`;
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    function clearForm() {
+        if (confirm('Are you sure you want to clear all form data?')) {
+            document.querySelector('form').reset();
+            hideResults();
+        }
+    }
+
+    function hideResults() {
+        const resultsCard = document.getElementById('resultsCard');
+        const guidelinesCard = document.getElementById('guidelinesCard');
+        const resultsContent = document.getElementById('resultsContent');
+
+        resultsCard.style.display = 'none';
+        guidelinesCard.style.display = 'block';
+        resultsContent.innerHTML = '';
+    }
+
+    function showError(message) {
+        const resultsCard = document.getElementById('resultsCard');
+        const guidelinesCard = document.getElementById('guidelinesCard');
+        const resultsContent = document.getElementById('resultsContent');
+
+        guidelinesCard.style.display = 'none';
+        resultsCard.style.display = 'block';
+        resultsContent.innerHTML = '<div class="guideline-item" style="color: #ef4444; font-weight: bold;">❌ Error: ' + message + '</div>';
+    }
+
+    function showResults(data) {
+        const resultsCard = document.getElementById('resultsCard');
+        const guidelinesCard = document.getElementById('guidelinesCard');
+        const resultsContent = document.getElementById('resultsContent');
+
+        // Hide guidelines and show results
+        guidelinesCard.style.display = 'none';
+        resultsCard.style.display = 'block';
+
+        // Create results HTML
+        let resultHTML = '';
+
+        if (data.prediction === 'Theft Detected') {
+            resultHTML += '<div class="guideline-item" style="color: #ef4444; font-weight: bold;">⚠️ ' + data.prediction + '</div>';
+        } else {
+            resultHTML += '<div class="guideline-item" style="color: #10b981; font-weight: bold;">✅ ' + data.prediction + '</div>';
+        }
+
+        resultHTML += '<div class="guideline-item">Model Used: <strong>' + data.model_used + '</strong></div>';
+        resultHTML += '<div class="guideline-item">Confidence: <strong>' + data.confidence + '</strong></div>';
+
+        // Probabilities support optional presence
+        if (data.probabilities && data.probabilities.no_theft && data.probabilities.theft) {
+            // if server returns structured objects
+            const noTheft = data.probabilities.no_theft.prob !== undefined ? (data.probabilities.no_theft.pct || (data.probabilities.no_theft.prob*100).toFixed(2) + '%') : data.probabilities.no_theft;
+            const theft = data.probabilities.theft.prob !== undefined ? (data.probabilities.theft.pct || (data.probabilities.theft.prob*100).toFixed(2) + '%') : data.probabilities.theft;
+
+            resultHTML += '<div class="results-row">No Theft: <strong>' + noTheft + '</strong>' +
+                          '<div class="progress"><div class="progress-bar" style="width: ' + (parseFloat(noTheft) || 0) + '%"></div></div></div>';
+
+            resultHTML += '<div class="results-row">Theft: <strong>' + theft + '</strong>' +
+                          '<div class="progress"><div class="progress-bar" style="width: ' + (parseFloat(theft) || 0) + '%"></div></div></div>';
+        }
+
+        resultsContent.innerHTML = resultHTML;
+    }
+
+    document.getElementById('predictionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = {};
+        for (let [key, value] of formData.entries()) {
+            data[key] = value;
+        }
+
+        // Show loading state
+        const submitButton = this.querySelector('.btn-primary');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = '🔄 Analyzing...';
+        submitButton.disabled = true;
+
+        // Show inline loading indicator
+        const resultsCard = document.getElementById('resultsCard');
+        const guidelinesCard = document.getElementById('guidelinesCard');
+        const resultsContent = document.getElementById('resultsContent');
+        guidelinesCard.style.display = 'none';
+        resultsCard.style.display = 'block';
+        resultsContent.innerHTML = '<div class="guideline-item">🔄 Running analysis, please wait...</div>';
+
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showError(data.error);
+            } else {
+                showResults(data);
+            }
+        })
+        .catch(error => {
+            showError('Failed to connect to server. Please try again.');
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            // Reset button state
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        });
+    });
+
+    // Basic client-side validation to prevent common mistakes
+    document.getElementById('predictionForm').addEventListener('input', function() {
+        const form = this;
+        const required = form.querySelectorAll('[required]');
+        let ok = true;
+        required.forEach(function(el) {
+            if (!el.value || el.value.trim() === '') ok = false;
+            if (el.type === 'number' && el.value !== '') {
+                const num = parseFloat(el.value);
+                if (isNaN(num)) ok = false;
+            }
+        });
+        form.querySelector('.btn-primary').disabled = !ok;
+    });
+
+    // Initialize state
+    document.getElementById('predictionForm').dispatchEvent(new Event('input'));
+</script>
+
+</body>
+</html>
