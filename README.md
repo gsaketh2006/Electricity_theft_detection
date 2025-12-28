@@ -2,6 +2,8 @@
 
 A machine learning–based system designed to identify electricity theft by analyzing consumer electricity usage patterns. This project leverages advanced machine learning and generative modeling techniques to accurately detect abnormal behavior and support power distribution companies in reducing losses.
 
+**Live Website:** https://etd-2025.onrender.com/
+
 ---
 
 ## Project Overview
@@ -76,7 +78,8 @@ http://127.0.0.1:5000
 
 **Dataset Type:** Electricity Consumption Dataset  
 **Target Variable:** Theft (0 – Normal, 1 – Theft)
-**Dataset Link:** https://drive.google.com/file/d/1mlf4Sn0J9-0EPd0tYC6Rx7ZPGn-Jw0U0/view?usp=drive_link
+
+- **Dataset Link:** https://drive.google.com/file/d/1mlf4Sn0J9-0EPd0tYC6Rx7ZPGn-Jw0U0/view?usp=drive_link
 
 ### Key Features
 - Mean electricity consumption  
